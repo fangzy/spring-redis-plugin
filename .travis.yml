@@ -8,4 +8,4 @@ before_script:
   - "tar xzf redis-2.8.19.tar.gz"
   - "cd redis-2.8.19"
   - "make"
-  - "src/redis-server --port 6380"
+  - "src/redis-server --port 6380 --daemonize yes"
