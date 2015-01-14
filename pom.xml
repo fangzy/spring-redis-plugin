@@ -10,6 +10,33 @@
     <packaging>jar</packaging>
 
     <name>spring-redis-plugin</name>
+    <description>Jedis plugin for spring</description>
+    <url>https://github.com/fangzy/spring-redis-plugin</url>
+
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:git://github.com/fangzy/spring-redis-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:fangzy/spring-redis-plugin.git</developerConnection>
+        <url>git@github.com:fangzy/spring-redis-plugin.git</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>fangzy</name>
+            <email>zyuanf@gmail.com</email>
+        </developer>
+    </developers>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/fangzy/spring-redis-plugin/issues</url>
+    </issueManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -101,7 +128,6 @@
                 <executions>
                     <execution>
                         <id>attach-sources</id>
-                        <phase>verify</phase>
                         <goals>
                             <goal>jar-no-fork</goal>
                         </goals>
