@@ -1,4 +1,4 @@
-spring-redis-plugin
+spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-plugin.svg?branch=master)](https://travis-ci.org/fangzy/spring-redis-plugin)
 ===========
 本项目是[Jedis](https://github.com/xetorthio/jedis)基于spring的增强版,实现了自动获取连接和关闭连接,提供基于redis的分布式锁实现.
 
@@ -6,13 +6,8 @@ spring-redis-plugin
 
 ### 1.1 SNAPSHOT
 
-```xml
-<dependency>
-    <groupId>org.reindeer</groupId>
-    <artifactId>spring-redis-plugin</artifactId>
-    <version>1.3-SNAPSHOT</version>
-</dependency>
-```
+暂未上传中央仓库
+
 ### 1.2 正式版
 
 暂无
@@ -95,11 +90,13 @@ spring-redis-plugin
     <property name="shardedJedisPool" ref="shardedJedisPool"/>
 </bean>
 
-<context:component-scan base-package="org.reindeer.core" />
+<context:component-scan base-package="org.reindeer.reids" />
 
 <!--使用@Redis注解时必须加上-->
 <aop:aspectj-autoproxy proxy-target-class="true"/>
 ```
+
+> 请按照需要选择配置
 
 ### 2.2 依赖注入
 
