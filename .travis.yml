@@ -9,3 +9,6 @@ install:
   - "cd redis-2.8.19"
   - "make"
   - "src/redis-server --port 6380 --daemonize yes"
+script:
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+  - mvn test -B
