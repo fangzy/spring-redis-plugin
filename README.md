@@ -4,13 +4,28 @@ spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-
 
 ## 1 Maven POM 配置
 
-### 1.1 SNAPSHOT
+暂时使用Github做为Maven仓库
 
-暂未上传中央仓库
+### 1.1 添加仓库地址
 
-### 1.2 正式版
+```xml
+<repositories>
+    <repository>
+      <id>spring-redis-plugin-releases</id>
+      <url>https://raw.github.com/fangzy/spring-redis-plugin/master/releases</url>
+    </repository>
+</repositories>
+```
 
-暂无
+### 1.2 添加依赖
+
+```xml
+<dependency>
+    <groupId>org.reindeer</groupId>
+    <artifactId>spring-redis-plugin</artifactId>
+    <version>1.3</version>
+</dependency>
+```
 
 ### 1.3 依赖`spring-context`项目
 
