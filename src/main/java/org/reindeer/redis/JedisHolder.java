@@ -73,14 +73,6 @@ public class JedisHolder implements InitializingBean {
         }
     }
 
-    public void release(Jedis jedis, boolean isBroken) {
-        if (JEDIS_THREAD_LOCAL.get().hasJedis()) {
-            return;
-        }
-        returnResource(jedis, isBroken, "");
-        JEDIS_THREAD_LOCAL.remove();
-    }
-
     public boolean hasJedis() {
         return JEDIS_THREAD_LOCAL.get().hasJedis();
     }
@@ -114,19 +106,27 @@ public class JedisHolder implements InitializingBean {
         jedisResource.setJedis(shardedJedis);
     }
 
-    public void releaseForce(boolean isBroken, String val) {
+    public void release(Jedis jedis) {
+        if (JEDIS_THREAD_LOCAL.get().hasJedis()) {
+            return;
+        }
+        returnResource(jedis);
+        JEDIS_THREAD_LOCAL.remove();
+    }
+
+    public void releaseForce() {
         JedisResource<Jedis> jedisResource = JEDIS_THREAD_LOCAL.get();
         if (!jedisResource.hasJedis()) {
             return;
         }
         int c = jedisResource.decrementAndGet();
         if (c == 0) {
-            returnResource(jedisResource.getJedis(), isBroken, val);
+            returnResource(jedisResource.getJedis());
             JEDIS_THREAD_LOCAL.remove();
         }
     }
 
-    public void releaseShardedForce(boolean isBroken) {
+    public void releaseShardedForce() {
         JedisResource<ShardedJedis> jedisResource = SHARDED_JEDIS_THREAD_LOCAL.get();
         if (!jedisResource.hasJedis()) {
             return;
@@ -136,25 +136,13 @@ public class JedisHolder implements InitializingBean {
             return;
         }
         ShardedJedis shardedJedis = jedisResource.getJedis();
-        if (isBroken) {
-            shardedJedisPool.returnBrokenResource(shardedJedis);
-        } else {
-            shardedJedisPool.returnResource(shardedJedis);
-        }
+        shardedJedis.close();
         SHARDED_JEDIS_THREAD_LOCAL.remove();
     }
 
-    private void returnResource(Jedis jedis, boolean isBroken, String val) {
-        JedisPool jedisPool;
-        if (val.isEmpty()) {
-            jedisPool = jedisPoolMap.get(DEFAULT);
-        } else {
-            jedisPool = jedisPoolMap.get(val);
-        }
-        if (isBroken) {
-            jedisPool.returnBrokenResource(jedis);
-        } else {
-            jedisPool.returnResource(jedis);
+    private void returnResource(Jedis jedis) {
+        if (jedis != null) {
+            jedis.close();
         }
     }
 

@@ -42,8 +42,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <org.springframework-version>4.1.1.RELEASE</org.springframework-version>
-        <jedis.version>2.6.0</jedis.version>
+        <org.springframework-version>4.2.1.RELEASE</org.springframework-version>
+        <jedis.version>2.7.2</jedis.version>
         <slf4j-api.version>1.7.7</slf4j-api.version>
     </properties>
 

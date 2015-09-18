@@ -37,25 +37,23 @@ public class JedisCallback extends AbstractCallback {
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
         Jedis jedis = null;
-        boolean isBroken = false;
         filterMethod(method);
         try {
             jedis = jedisHolder.get();
             return methodProxy.invoke(jedis, objects);
         } catch (Exception e) {
-            isBroken = true;
             LOGGER.error(e.getMessage());
             throw e;
         } finally {
-            release(jedis, isBroken);
+            release(jedis);
         }
     }
 
-    private void release(Jedis jedis, boolean isBroken) {
+    private void release(Jedis jedis) {
         if (jedis == null) {
             return;
         }
-        jedisHolder.release(jedis, isBroken);
+        jedisHolder.release(jedis);
     }
 
 }
