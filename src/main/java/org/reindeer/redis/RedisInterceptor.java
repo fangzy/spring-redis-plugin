@@ -33,7 +33,7 @@ public class RedisInterceptor implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        Redis redis = invocation.getMethod().getDeclaredAnnotation(Redis.class);
+        Redis redis = invocation.getMethod().getAnnotation(Redis.class);
         if (redis == null) {
             throw new IllegalArgumentException("Can not find @Redis annotation.");
         }

@@ -167,7 +167,14 @@ public class JedisHolder implements InitializingBean {
     }
 
     public int getConnectionNum(String connName) {
-        return jedisPoolMap.getOrDefault(connName, jedisPoolMap.get(DEFAULT)).getNumActive();
+    	if(connName == null){
+    		return jedisPoolMap.get(DEFAULT).getNumActive();
+    	}
+    	JedisPool pool = jedisPoolMap.get(connName);
+    	if(pool==null){
+    		return jedisPoolMap.get(DEFAULT).getNumActive();
+    	}
+        return pool.getNumActive();
     }
 
     @Override
