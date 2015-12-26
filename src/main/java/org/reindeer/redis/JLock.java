@@ -26,8 +26,8 @@ import redis.clients.jedis.Jedis;
  */
 public final class JLock {
 
+    public static final int EXPIRE = 1200;
     private static final String LOCK = "redis:lock:%s";
-    private static final int EXPIRE = 1200;
     private static final Logger LOGGER = LoggerFactory.getLogger(JLock.class);
 
     private JLock() {
@@ -35,7 +35,7 @@ public final class JLock {
     }
 
     /**
-     * 获得锁,未取得时一直阻塞
+     * 获得锁,未取得时一直阻塞,超时时间默认1200s;
      *
      * @param id
      */
@@ -50,10 +50,11 @@ public final class JLock {
      * @param timeout 超时时间(ms)
      * @return
      */
-    public static boolean getLock(String id, int timeout) {
+    public static boolean getLock(String id, long timeout) {
         Jedis jedis = JedisProxy.create();
         long lock = 0;
         long start = System.currentTimeMillis();
+        long pexpire = timeout > 0 ? (long) timeout : EXPIRE * 1000;
         while (lock != 1) {
             long now = System.currentTimeMillis();
             //判断超时
@@ -64,12 +65,30 @@ public final class JLock {
             String key = String.format(LOCK, id);
             lock = jedis.setnx(key, String.valueOf(timestamp));
             if (lock == 1) {
-                jedis.expire(key, EXPIRE);
+                jedis.pexpire(key, pexpire);
                 LOGGER.debug("setnx");
             } else {
                 sleep();
             }
         }
+        return true;
+    }
+
+    /**
+     * 检查锁是否存在,立刻返回
+     *
+     * @param id
+     * @param timeout
+     * @return
+     */
+    public static boolean checkLock(String id, long timeout) {
+        Jedis jedis = JedisProxy.create();
+        String key = String.format(LOCK, id);
+        long exists = jedis.setnx(key, String.valueOf(System.currentTimeMillis()));
+        if (exists == 0) {
+            return false;
+        }
+        jedis.pexpire(key, timeout);
         return true;
     }
 
