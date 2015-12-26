@@ -53,7 +53,7 @@ public class JLockTest extends AbstractTests {
             i += completionService.take().get();
         }
         exec.shutdown();
-        Assert.assertEquals(1, i);
+        Assert.assertEquals(2, i);
     }
 
     class TestThread implements Callable<Integer> {
@@ -70,15 +70,12 @@ public class JLockTest extends AbstractTests {
         public Integer call() throws Exception {
             int m = 0;
             try {
-                Thread.sleep(100);
                 logger.debug("start");
                 if (!JLock.getLock("test", i)) {
                     logger.debug("timeout");
                     m = 0;
                 } else {
                     logger.debug("get lock");
-                    Thread.sleep(1000);
-                    JLock.releaseLock("test");
                     m = 1;
                 }
             } catch (Exception e) {

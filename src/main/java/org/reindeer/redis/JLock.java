@@ -54,7 +54,7 @@ public final class JLock {
         Jedis jedis = JedisProxy.create();
         long lock = 0;
         long start = System.currentTimeMillis();
-        long pexpire = timeout > 0 ? (long) timeout : EXPIRE * 1000;
+        long pexpire = timeout > 0 ? timeout : EXPIRE * 1000;
         while (lock != 1) {
             long now = System.currentTimeMillis();
             //判断超时
