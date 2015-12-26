@@ -76,6 +76,8 @@ public class JLockTest extends AbstractTests {
                     m = 0;
                 } else {
                     logger.debug("get lock");
+                    Thread.sleep(1000);
+                    JLock.releaseLock("test");
                     m = 1;
                 }
             } catch (Exception e) {
