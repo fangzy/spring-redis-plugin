@@ -4,9 +4,9 @@ jdk:
 services:
   - redis-server
 install:
-  - "wget http://download.redis.io/releases/redis-2.8.19.tar.gz"
-  - "tar xzf redis-2.8.19.tar.gz"
-  - "cd redis-2.8.19"
+  - "wget http://download.redis.io/releases/redis-3.0.6.tar.gz"
+  - "tar xzf redis-3.0.6.tar.gz"
+  - "cd redis-3.0.6"
   - "make"
   - "src/redis-server --port 6380 --daemonize yes"
   - "cd .."

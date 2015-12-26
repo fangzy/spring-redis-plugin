@@ -94,7 +94,7 @@ public final class JLock {
 
     private static void sleep() {
         try {
-            Thread.sleep(100);
+            Thread.sleep(50);
         } catch (InterruptedException e) {
             LOGGER.error("An unexpected error occurred.", e);
         }
