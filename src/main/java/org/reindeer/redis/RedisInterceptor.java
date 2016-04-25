@@ -18,6 +18,7 @@ package org.reindeer.redis;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.exceptions.JedisException;
 
@@ -29,6 +30,7 @@ import redis.clients.jedis.exceptions.JedisException;
 @Component
 public class RedisInterceptor implements MethodInterceptor {
 
+	@Autowired
     private JedisHolder jedisHolder;
 
     @Override
