@@ -41,7 +41,7 @@ public abstract class AbstractCallback implements MethodInterceptor {
 
     protected void filterNoSupportMethod(Method method, String methodName, boolean status) {
         if (method.getName().equals(methodName) && !status) {
-            throw new UnsupportedOperationException("Jedis proxy does not support " + methodName + " method.");
+            throw new UnsupportedOperationException("Jedis proxy does not support " + methodName + " method. Please use @Redis annotation.");
         }
     }
 }

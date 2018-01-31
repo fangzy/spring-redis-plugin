@@ -4,16 +4,16 @@ spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-
 
 ## 1 Maven POM 配置
 
-暂时使用Github做为Maven仓库
+使用[Jitpack](https://jitpack.io)仓库
 
 ### 1.1 添加仓库地址
 
 ```xml
 <repositories>
     <repository>
-      <id>spring-redis-plugin-releases</id>
-      <url>https://raw.github.com/fangzy/spring-redis-plugin/master/releases</url>
-    </repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
 </repositories>
 ```
 
@@ -21,9 +21,9 @@ spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-
 
 ```xml
 <dependency>
-    <groupId>org.reindeer</groupId>
+    <groupId>com.github.fangzy</groupId>
     <artifactId>spring-redis-plugin</artifactId>
-    <version>1.3</version>
+    <version>1.5</version>
 </dependency>
 ```
 
@@ -45,7 +45,23 @@ spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-
 
 ## 2 使用方法
 
-### 2.1 spring配置文件
+### 2.1 Spring Configuration配置文件
+
+> 直接使用默认配置
+
+```java
+@Configuration
+@PropertySource("classpath:redisPool.properties")
+@Import(DefaultRedisConfiguration.class)
+public class redisConfig {
+    
+}
+
+```
+
+> 自定义配置参见[`DefaultRedisConfiguration`](/src/main/java/com/github/fangzy/redisconfig/DefaultRedisConfiguration.java)、[`DefaultShardedRedisConfiguration`](/src/main/java/com/github/fangzy/redisconfig/DefaultShardedRedisConfiguration.java)
+
+### 2.2 Spring XML配置文件
 
 ```xml
 <context:property-placeholder location="classpath:your-redis-settings.properties" file-encoding="UTF-8"/>
@@ -62,7 +78,7 @@ spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-
     <property name="testWhileIdle" value="${redis.testWhileIdle}"/>
 </bean>
 
-<bean id="jedisPool" class="redis.clients.jedis.JedisPool" destroy-method="destroy">
+<bean id="default" class="redis.clients.jedis.JedisPool" destroy-method="destroy">
     <constructor-arg ref="jedisPoolFactoryConfig" name="poolConfig"/>
     <constructor-arg value="${redis.ip}" name="host" type="java.lang.String"/>
     <constructor-arg value="${redis.port}" name="port" type="int"/>
@@ -93,17 +109,6 @@ spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-
         </list>
     </constructor-arg>
 </bean>
-    
-<bean id="jedisHolder" class="org.reindeer.redis.JedisHolder" >
-    <property name="jedisPoolMap">
-        <map>
-            <entry key="default" value-ref="jedisPool"/>
-            <entry key="test6380" value-ref="jedisPool6380"/>
-        </map>
-    </property>
-    <!--如果使用shard redis-->
-    <property name="shardedJedisPool" ref="shardedJedisPool"/>
-</bean>
 
 <context:component-scan base-package="org.reindeer.reids" />
 
@@ -113,7 +118,7 @@ spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-
 
 > 请按照需要选择配置
 
-### 2.2 依赖注入
+### 2.3 依赖注入
 
 ```java
 @Service
@@ -134,7 +139,7 @@ public class JedisDemo {
 
 > 如果需要使用pipelined,watch,unwatch,multi 方法必须开启注解,详见2.3
 
-### 2.3 使用注解
+### 2.4 使用注解
 
 ```java
 @Service
@@ -157,7 +162,7 @@ public class JedisDemo {
 }
 ```
 
-### 2.4 使用JedisProxy
+### 2.5 使用JedisProxy
 
 ```java
 public class JedisDemo {
@@ -176,7 +181,7 @@ public class JedisDemo {
 > JedisProxy 通常用于静态方法,但是需要在spring容器全部加载完毕后使用
   如果需要使用pipelined,watch,unwatch,multi 方法必须开启注解,详见2.3
 
-### 2.5 使用多数据源
+### 2.6 使用多数据源
 
 ```java
 @Service
@@ -199,20 +204,50 @@ public class JedisDemo {
 }
 ```
 
+> java config 使用`@Bean(name="anotherRedis")`来定义数据源名称
+
+```java
+@Configuration
+public class RedisConfiguration {
+    @Bean(name = "default", destroyMethod = "destroy")
+    public JedisPool defaultJedisPool() {
+            return new JedisPool(defaultJedisPoolConfig(),
+                    env.getProperty("redis.host", "127.0.0.1"),
+                    env.getProperty("redis.port", Integer.class, 6379),
+                    Protocol.DEFAULT_TIMEOUT,
+                    StringUtils.isEmpty(env.getProperty("redis.password")) ? null : env.getProperty("redis.password"));
+    }
+    
+    @Bean(name = "anotherRedis", destroyMethod = "destroy")
+    public JedisPool testJedisPool() {
+        return new JedisPool(defaultJedisPoolConfig(),
+                env.getProperty("redis.host2", "127.0.0.1"),
+                env.getProperty("redis.port2", Integer.class, 6379),
+                Protocol.DEFAULT_TIMEOUT,
+                StringUtils.isEmpty(env.getProperty("redis.password2")) ? null : env.getProperty("redis.password2"));
+    }
+}
+
+```
+
+> xml配置
+
 ```xml
-<bean id="jedisHolder" class="org.reindeer.redis.JedisHolder" >
-    <property name="jedisPoolMap">
-        <map>
-            <entry key="default" value-ref="jedisPool"/>
-            <entry key="anotherRedis" value-ref="jedisPoolAnother"/>
-        </map>
-    </property>
+<bean id="default" class="redis.clients.jedis.JedisPool" destroy-method="destroy">
+    <constructor-arg ref="jedisPoolFactoryConfig" name="poolConfig"/>
+    <constructor-arg value="${redis.ip}" name="host" type="java.lang.String"/>
+    <constructor-arg value="${redis.port}" name="port" type="int"/>
+</bean>
+<bean id="anotherRedis" class="redis.clients.jedis.JedisPool" destroy-method="destroy">
+    <constructor-arg ref="jedisPoolFactoryConfig" name="poolConfig"/>
+    <constructor-arg value="${redis.ip}" name="host" type="java.lang.String"/>
+    <constructor-arg value="6380" name="port" type="int"/>
 </bean>
 ```
 
-> jedisPoolMap中的default为默认数据源
+> jedisPool的default为默认数据源，必须存在
 
-### 2.6 使用shard
+### 2.7 使用shard
 
 ```java
 @Service
@@ -234,8 +269,44 @@ public class ShardedJedisDemo {
 }
 ```
 
+> java config配置
+
+```java
+@Configuration
+public class RedisConfiguration {
+    @Bean(destroyMethod = "destroy")
+    public ShardedJedisPool defaultShardedJedisPool() {
+        String hoststr = env.getProperty("redis.sharded.hosts", "127.0.0.1");
+        String portstr = env.getProperty("redis.sharded.ports", "6379");
+        List<String> hosts = Arrays.asList(hoststr.split(","));
+        List<Integer> ports = Stream.of(portstr.split(",")).map(Integer::new).collect(Collectors.toList());
+
+        List<JedisShardInfo> list = IntStream.range(0, hosts.size()).mapToObj(i -> new JedisShardInfo(hosts.get(i), ports.get(i))).collect(Collectors.toList());
+        return new ShardedJedisPool(defaultJedisPoolConfig(), list);
+    }
+}
+```
+
+> xml配置
+
 ```xml
-<bean id="jedisHolder" class="org.reindeer.redis.JedisHolder" >
-    <property name="shardedJedisPool" ref="shardedJedisPool"/>
+<bean id="jedisShardInfo1" class="redis.clients.jedis.JedisShardInfo">
+    <constructor-arg value="${redis.ip}" name="host" type="java.lang.String"/>
+    <constructor-arg value="${redis.port}" name="port" type="int"/>
+</bean>
+
+<bean id="jedisShardInfo2" class="redis.clients.jedis.JedisShardInfo">
+    <constructor-arg value="${redis.ip}" name="host" type="java.lang.String"/>
+    <constructor-arg value="6380" name="port" type="int"/>
+</bean>
+
+<bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool" destroy-method="destroy">
+    <constructor-arg ref="jedisPoolFactoryConfig" name="poolConfig"/>
+    <constructor-arg name="shards">
+        <list>
+            <ref bean="jedisShardInfo1"/>
+            <ref bean="jedisShardInfo2"/>
+        </list>
+    </constructor-arg>
 </bean>
 ```
