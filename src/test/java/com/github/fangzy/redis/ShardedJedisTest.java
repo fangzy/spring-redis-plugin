@@ -30,11 +30,11 @@ public class ShardedJedisTest extends AbstractTests {
     private int times = 100000;
 
     @Autowired
-    @Qualifier("jedisPool")
+    @Qualifier("default")
     private JedisPool jedisPool;
 
     @Autowired
-    @Qualifier("jedisPool6380")
+    @Qualifier("test")
     private JedisPool jedisPool6380;
 
     @Test

@@ -53,7 +53,7 @@ public class JLockTest extends AbstractTests {
             i += completionService.take().get();
         }
         exec.shutdown();
-        Assert.assertEquals(2, i);
+        Assert.assertEquals(1, i);
     }
 
     class TestThread implements Callable<Integer> {
