@@ -26,7 +26,7 @@ import redis.clients.jedis.Jedis;
  */
 public final class JLock {
 
-    public static final int EXPIRE = 1200;
+    public static final long EXPIRE = 5000L;
     private static final String LOCK = "redis:lock:%s";
     private static final Logger LOGGER = LoggerFactory.getLogger(JLock.class);
 
@@ -35,11 +35,11 @@ public final class JLock {
     }
 
     /**
-     * 获得锁,未取得时一直阻塞,超时时间默认1200s;
+     * 获得锁,未取得时一直阻塞,超时时间默认5000ms;
      *
      * @param id
      */
-    public static void getLock(String id) {
+    public static void waitLock(String id) {
         getLock(id, 0);
     }
 
@@ -74,6 +74,10 @@ public final class JLock {
         return true;
     }
 
+    public static boolean getLock(String id) {
+        return getLock(id, EXPIRE);
+    }
+
     /**
      * 检查锁是否存在,立刻返回
      *
@@ -90,6 +94,10 @@ public final class JLock {
         }
         jedis.pexpire(key, timeout);
         return true;
+    }
+
+    public static boolean checkLock(String id) {
+        return checkLock(id, EXPIRE);
     }
 
     private static void sleep() {
