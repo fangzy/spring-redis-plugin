@@ -1,4 +1,4 @@
-spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-plugin.svg?branch=master)](https://travis-ci.org/fangzy/spring-redis-plugin)
+spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-plugin.svg?branch=master)](https://travis-ci.org/fangzy/spring-redis-plugin) [![Release](https://jitpack.io/v/fangzy/spring-redis-plugin.svg)](https://jitpack.io/#fangzy/spring-redis-plugin)
 ===========
 本项目是[Jedis](https://github.com/xetorthio/jedis)基于spring的增强版,实现了自动获取连接和关闭连接,提供基于redis的分布式锁实现.
 
@@ -11,9 +11,9 @@ spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-
 ```xml
 <repositories>
     <repository>
-	    <id>jitpack.io</id>
-	    <url>https://jitpack.io</url>
-	</repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
 </repositories>
 ```
 
