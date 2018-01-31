@@ -5,7 +5,7 @@
     <groupId>com.github.fangzy</groupId>
 
     <artifactId>spring-redis-plugin</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.5</version>
     <packaging>jar</packaging>
 
     <name>spring-redis-plugin</name>
@@ -23,7 +23,7 @@
         <connection>scm:git:git://github.com/fangzy/spring-redis-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:fangzy/spring-redis-plugin.git</developerConnection>
         <url>git@github.com:fangzy/spring-redis-plugin.git</url>
-        <tag>HEAD</tag>
+        <tag>1.5.RELEASE</tag>
     </scm>
 
     <developers>
