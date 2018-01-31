@@ -45,11 +45,11 @@ public class JLockTest extends AbstractTests {
     public void testGetLock1() throws Exception {
         ExecutorService exec = Executors.newCachedThreadPool();
         CompletionService<Integer> completionService = new ExecutorCompletionService<>(exec);
-        for (int n = 0; n < 20; n++) {
+        for (int n = 0; n < 10; n++) {
             completionService.submit(new TestThread(2000));
         }
         int i = 0;
-        for (int n = 0; n < 20; n++) {
+        for (int n = 0; n < 10; n++) {
             i += completionService.take().get();
         }
         exec.shutdown();
