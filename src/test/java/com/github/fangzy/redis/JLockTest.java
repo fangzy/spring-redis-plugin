@@ -46,7 +46,7 @@ public class JLockTest extends AbstractTests {
         ExecutorService exec = Executors.newFixedThreadPool(25);
         CompletionService<Integer> completionService = new ExecutorCompletionService<>(exec);
         for (int n = 0; n < 20; n++) {
-            completionService.submit(new TestThread(2000));
+            completionService.submit(new TestThread(2000 - 1000 * n));
         }
         int i = 0;
         for (int n = 0; n < 20; n++) {
@@ -61,7 +61,7 @@ public class JLockTest extends AbstractTests {
         ExecutorService exec = Executors.newCachedThreadPool();
         CompletionService<Integer> completionService = new ExecutorCompletionService<>(exec);
         for (int n = 0; n < 10; n++) {
-            completionService.submit(new TestCheckLockThread(2000 - 180 * n));
+            completionService.submit(new TestCheckLockThread(2000));
         }
         int i = 0;
         for (int n = 0; n < 10; n++) {
@@ -88,6 +88,9 @@ public class JLockTest extends AbstractTests {
         private int i = 0;
 
         public TestThread(int i) {
+            if (i <= 1000) {
+                i = 1000;
+            }
             this.i = i;
         }
 
