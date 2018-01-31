@@ -61,7 +61,7 @@ public class JLockTest extends AbstractTests {
         ExecutorService exec = Executors.newCachedThreadPool();
         CompletionService<Integer> completionService = new ExecutorCompletionService<>(exec);
         for (int n = 0; n < 10; n++) {
-            completionService.submit(new TestCheckLockThread(2000 - 100 * n));
+            completionService.submit(new TestCheckLockThread(2000 - 180 * n));
         }
         int i = 0;
         for (int n = 0; n < 10; n++) {
