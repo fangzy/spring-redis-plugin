@@ -4,7 +4,7 @@ spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-
 
 ## 1 Maven POM 配置
 
-使用[Jitpack](https://jitpack.io)仓库
+使用[Jitpack](https://jitpack.io/#fangzy/spring-redis-plugin)仓库
 
 ### 1.1 添加仓库地址
 
@@ -43,7 +43,7 @@ spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-
 </dependency>
 ```
 
-## 2 使用方法
+## 2 Jedis使用方法
 
 ### 2.1 Spring Configuration配置文件
 
@@ -53,7 +53,7 @@ spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-
 @Configuration
 @PropertySource("classpath:redisPool.properties")
 @Import(DefaultRedisConfiguration.class)
-public class redisConfig {
+public class RedisConfig {
     
 }
 
@@ -140,6 +140,8 @@ public class JedisDemo {
 > 如果需要使用pipelined,watch,unwatch,multi 方法必须开启注解,详见2.3
 
 ### 2.4 使用注解
+
+> jedisPool的default为默认数据源，必须存在
 
 ```java
 @Service
@@ -310,3 +312,10 @@ public class RedisConfiguration {
     </constructor-arg>
 </bean>
 ```
+
+## 3 JLock分布式锁
+
+- void waitLock(String key) 一直等待解锁
+- boolean getLock(String key) 获得锁,超时退出
+- boolean checkLock(String key) 检查锁是否存在,立即返回
+- void releaseLock(String key) 手动释放锁
