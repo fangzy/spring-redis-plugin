@@ -23,7 +23,7 @@ public class JedisTest extends AbstractTests {
     private JedisServiceDemo demo;
 
     @Autowired
-    @Qualifier("jedisPool")
+    @Qualifier("default")
     private JedisPool jedisPool;
 
     private int times = 10000;
@@ -88,7 +88,6 @@ public class JedisTest extends AbstractTests {
 
     private void jedisIncr(String key, int times) {
         Jedis jedis = null;
-        boolean isBroken = false;
         try {
             jedis = jedisPool.getResource();
             Pipeline pipeline = jedis.pipelined();
@@ -101,16 +100,15 @@ public class JedisTest extends AbstractTests {
             LOGGER.info(response.get());
             jedis.del(key);
         } catch (Exception e) {
-            isBroken = true;
+            LOGGER.error(e.getMessage(), e);
         } finally {
-            release(jedis, isBroken);
+            release(jedis);
         }
     }
 
 
     private void jedisSetAndGet(String key, int times) {
         Jedis jedis = null;
-        boolean isBroken = false;
         try {
             jedis = jedisPool.getResource();
             for (int i = 0; i < times; i++) {
@@ -120,19 +118,15 @@ public class JedisTest extends AbstractTests {
             LOGGER.info(jedis.get(key));
             jedis.del(key);
         } catch (Exception e) {
-            isBroken = true;
+            LOGGER.error(e.getMessage(), e);
         } finally {
-            release(jedis, isBroken);
+            release(jedis);
         }
     }
 
-    private void release(Jedis jedis, boolean isBroken) {
+    private void release(Jedis jedis) {
         if (jedis != null) {
-            if (isBroken) {
-                jedisPool.returnBrokenResource(jedis);
-            } else {
-                jedisPool.returnResource(jedis);
-            }
+            jedis.close();
         }
     }
 }

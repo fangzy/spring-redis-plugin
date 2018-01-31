@@ -42,7 +42,7 @@ public class JedisServiceDemo {
         jedis.del(key);
     }
 
-    @Redis("test6380")
+    @Redis("test")
     public void setAndGet2(String key, int times) {
         for (int i = 0; i < times; i++) {
             jedis.set(key, "test1");

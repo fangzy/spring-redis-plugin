@@ -61,8 +61,8 @@ public class ShardedJedisTest extends AbstractTests {
         LOGGER.info(String.valueOf(set2.size()));
         jedis2.del(set2.toArray(new String[set2.size()]));
 
-        jedisPool.returnResource(jedis1);
-        jedisPool6380.returnResource(jedis2);
+        jedis1.close();
+        jedis2.close();
     }
 
 }

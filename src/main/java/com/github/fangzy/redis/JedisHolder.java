@@ -16,9 +16,13 @@
 
 package com.github.fangzy.redis;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.NamedThreadLocal;
+import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.ShardedJedis;
@@ -31,7 +35,8 @@ import java.util.Map;
  *
  * @author FZY
  */
-public class JedisHolder implements InitializingBean {
+@Component
+public class JedisHolder implements InitializingBean, ApplicationContextAware {
 
     public static final String DEFAULT = "default";
 
@@ -161,5 +166,17 @@ public class JedisHolder implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         redisInterceptor.setJedisHolder(this);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        Map<String, JedisPool> jedisPoolMap = applicationContext.getBeansOfType(JedisPool.class);
+        ShardedJedisPool shardedJedisPool = applicationContext.getBean(ShardedJedisPool.class);
+        if (jedisPoolMap != null && !jedisPoolMap.isEmpty()) {
+            setJedisPoolMap(jedisPoolMap);
+        }
+        if (shardedJedisPool != null) {
+            setShardedJedisPool(shardedJedisPool);
+        }
     }
 }
