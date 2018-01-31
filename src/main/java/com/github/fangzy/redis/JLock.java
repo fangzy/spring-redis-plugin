@@ -66,7 +66,7 @@ public final class JLock {
             lock = jedis.setnx(key, String.valueOf(timestamp));
             if (lock == 1) {
                 jedis.pexpire(key, pexpire);
-                LOGGER.debug("setnx");
+                LOGGER.trace("redis lock setnx");
             } else {
                 sleep();
             }

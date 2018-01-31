@@ -45,15 +45,40 @@ public class JLockTest extends AbstractTests {
     public void testGetLock1() throws Exception {
         ExecutorService exec = Executors.newCachedThreadPool();
         CompletionService<Integer> completionService = new ExecutorCompletionService<>(exec);
-        for (int n = 0; n < 100; n++) {
-            completionService.submit(new TestThread(500));
+        for (int n = 0; n < 20; n++) {
+            completionService.submit(new TestThread(2000));
         }
         int i = 0;
-        for (int n = 0; n < 100; n++) {
+        for (int n = 0; n < 20; n++) {
             i += completionService.take().get();
         }
         exec.shutdown();
         Assert.assertEquals(1, i);
+    }
+
+    @Test
+    public void testCheckLock() throws Exception {
+        ExecutorService exec = Executors.newCachedThreadPool();
+        CompletionService<Integer> completionService = new ExecutorCompletionService<>(exec);
+        for (int n = 0; n < 20; n++) {
+            completionService.submit(new TestCheckLockThread(2000));
+        }
+        int i = 0;
+        for (int n = 0; n < 20; n++) {
+            i += completionService.take().get();
+        }
+        exec.shutdown();
+        Assert.assertEquals(1, i);
+    }
+
+    @Test
+    public void testReleaseLock() throws Exception {
+        JLock.getLock("test");
+        boolean existsBefore = jedis.exists("redis:lock:test");
+        JLock.releaseLock("test");
+        boolean existsAfter = jedis.exists("redis:lock:test");
+        Assert.assertTrue(existsBefore);
+        Assert.assertFalse(existsAfter);
     }
 
     class TestThread implements Callable<Integer> {
@@ -77,7 +102,39 @@ public class JLockTest extends AbstractTests {
                 } else {
                     logger.debug("get lock");
                     Thread.sleep(1000);
-                    JLock.releaseLock("test");
+                    if (i == 0) {
+                        JLock.releaseLock("test");
+                    }
+                    m = 1;
+                }
+            } catch (Exception e) {
+                logger.error("An unexpected error occurred.", e);
+            }
+            return m;
+        }
+    }
+
+    class TestCheckLockThread implements Callable<Integer> {
+
+        private final Logger logger = LoggerFactory.getLogger(getClass());
+
+        private int i = 0;
+
+        public TestCheckLockThread(int i) {
+            this.i = i;
+        }
+
+        @Override
+        public Integer call() throws Exception {
+            int m = 0;
+            try {
+                logger.debug("start");
+                if (!JLock.checkLock("test", i)) {
+                    logger.debug("return");
+                    m = 0;
+                } else {
+                    logger.debug("get lock");
+                    Thread.sleep(1000);
                     m = 1;
                 }
             } catch (Exception e) {
