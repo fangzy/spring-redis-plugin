@@ -43,13 +43,13 @@ public class JLockTest extends AbstractTests {
 
     @Test
     public void testGetLock1() throws Exception {
-        ExecutorService exec = Executors.newCachedThreadPool();
+        ExecutorService exec = Executors.newFixedThreadPool(25);
         CompletionService<Integer> completionService = new ExecutorCompletionService<>(exec);
-        for (int n = 0; n < 10; n++) {
+        for (int n = 0; n < 20; n++) {
             completionService.submit(new TestThread(2000));
         }
         int i = 0;
-        for (int n = 0; n < 10; n++) {
+        for (int n = 0; n < 20; n++) {
             i += completionService.take().get();
         }
         exec.shutdown();
@@ -101,8 +101,8 @@ public class JLockTest extends AbstractTests {
                     m = 0;
                 } else {
                     logger.debug("get lock");
-                    Thread.sleep(1000);
                     if (i == 0) {
+                        Thread.sleep(1000);
                         JLock.releaseLock("test");
                     }
                     m = 1;
