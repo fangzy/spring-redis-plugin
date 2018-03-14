@@ -16,6 +16,8 @@
 
 package com.github.fangzy.redis;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,7 @@ import java.util.Map;
 public class JedisHolder implements InitializingBean, ApplicationContextAware {
 
     public static final String DEFAULT = "default";
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(JedisHolder.class);
     private static final NamedThreadLocal<JedisResource<Jedis>> JEDIS_THREAD_LOCAL = new NamedThreadLocal<JedisResource<Jedis>>("jedis resource holder") {
         @Override
         protected JedisResource<Jedis> initialValue() {
@@ -170,13 +172,13 @@ public class JedisHolder implements InitializingBean, ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        Map<String, JedisPool> jedisPoolMap = applicationContext.getBeansOfType(JedisPool.class);
-        ShardedJedisPool shardedJedisPool = applicationContext.getBean(ShardedJedisPool.class);
-        if (jedisPoolMap != null && !jedisPoolMap.isEmpty()) {
+        try {
+            Map<String, JedisPool> jedisPoolMap = applicationContext.getBeansOfType(JedisPool.class);
+            ShardedJedisPool shardedJedisPool = applicationContext.getBean(ShardedJedisPool.class);
             setJedisPoolMap(jedisPoolMap);
-        }
-        if (shardedJedisPool != null) {
             setShardedJedisPool(shardedJedisPool);
+        } catch (BeansException e) {
+            LOGGER.warn(e.getMessage());
         }
     }
 }

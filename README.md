@@ -23,7 +23,7 @@ spring-redis-plugin  [![Build Status](https://travis-ci.org/fangzy/spring-redis-
 <dependency>
     <groupId>com.github.fangzy</groupId>
     <artifactId>spring-redis-plugin</artifactId>
-    <version>1.5</version>
+    <version>1.5.1</version>
 </dependency>
 ```
 
@@ -137,7 +137,7 @@ public class JedisDemo {
 }
 ```
 
-> 如果需要使用pipelined,watch,unwatch,multi 方法必须开启注解,详见2.3
+> 如果需要使用pipelined,watch,unwatch,multi 方法必须开启注解,详见2.4
 
 ### 2.4 使用注解
 
@@ -181,7 +181,7 @@ public class JedisDemo {
 ```
 
 > JedisProxy 通常用于静态方法,但是需要在spring容器全部加载完毕后使用
-  如果需要使用pipelined,watch,unwatch,multi 方法必须开启注解,详见2.3
+  如果需要使用pipelined,watch,unwatch,multi 方法必须开启注解,详见2.4
 
 ### 2.6 使用多数据源
 

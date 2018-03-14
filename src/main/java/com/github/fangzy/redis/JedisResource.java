@@ -16,8 +16,6 @@
 
 package com.github.fangzy.redis;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import redis.clients.jedis.BinaryJedisCommands;
 
 /**
@@ -26,7 +24,6 @@ import redis.clients.jedis.BinaryJedisCommands;
  * @author FZY
  */
 public class JedisResource<T extends BinaryJedisCommands> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JedisResource.class);
 
     private T t;
 
