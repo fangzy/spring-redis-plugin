@@ -174,8 +174,8 @@ public class JedisHolder implements InitializingBean, ApplicationContextAware {
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         try {
             Map<String, JedisPool> jedisPoolMap = applicationContext.getBeansOfType(JedisPool.class);
-            ShardedJedisPool shardedJedisPool = applicationContext.getBean(ShardedJedisPool.class);
             setJedisPoolMap(jedisPoolMap);
+            ShardedJedisPool shardedJedisPool = applicationContext.getBean(ShardedJedisPool.class);
             setShardedJedisPool(shardedJedisPool);
         } catch (BeansException e) {
             LOGGER.warn(e.getMessage());
